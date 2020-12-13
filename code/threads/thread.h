@@ -101,11 +101,12 @@ class Thread {
     void CheckOverflow();   	// Check if thread stack has overflowed
     void setStatus(ThreadStatus st) { status = st; }
     ThreadStatus getStatus() { return (status); }
-	char* getName() { return (name); }
+	  char* getName() { return (name); }
     
-	int getID() { return (ID); }
+	  int getID() { return (ID); }
     void Print() { cout << name; }
     void SelfTest();		// test whether thread impl is working
+    int getPriority() { return priority; }      // return priority
 
   private:
     // some of the private data for this class is listed above
