@@ -116,7 +116,7 @@ class Thread {
     ThreadStatus status;	// ready, running or blocked
     char* name;
 	  int   ID;
-   //int   priority;
+    int   priority;
     void StackAllocate(VoidFunctionPtr func, void *arg);
     				// Allocate a stack for thread.
 				// Used internally by Fork()

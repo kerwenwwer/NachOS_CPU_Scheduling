@@ -75,7 +75,7 @@ class Kernel {
 
 	  Thread* t[10];
 	  char*   execfile[10];
-    //int execfilePriority[10];   // MP3 -> store pritorty for each thread
+    int execfilePriority[10];   // MP3 -> store pritorty for each thread
 	  int execfileNum;
 	  int threadNum;
     bool randomSlice;		// enable pseudo-random time slicing

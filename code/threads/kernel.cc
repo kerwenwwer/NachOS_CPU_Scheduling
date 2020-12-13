@@ -37,11 +37,11 @@ Kernel::Kernel(int argc, char **argv)
     hostName = 0;    // machine id, also UNIX socket name
                      // 0 is the default machine id
 
-// /* MP3 Implement start*/
-//     for (int i = 0; i < 10; i++){   // format execfilePriority array to 0
-//         execfilePriority[i] = 0;
-//     }
-// /* MP3 Implement end */
+
+    for (int i = 0; i < 10; i++){   // format execfilePriority array to 0
+        execfilePriority[i] = 0;
+    }
+
     for (int i = 1; i < argc; i++)
     {
         if (strcmp(argv[i], "-rs") == 0)
@@ -61,13 +61,11 @@ Kernel::Kernel(int argc, char **argv)
             execfile[++execfileNum] = argv[++i];
             cout << execfile[execfileNum] << "\n";
         }
-    // /* MP3 Implement start*/
-    //     else if(strcmp(argv[i], "-ep") == 0) {                   
-    //         execfile[++execfileNum] = argv[++i];
-    //         execfilePriority[execfileNum] = atoi(argv[++i]);   
-    //         cout << execfile[execfileNum] << " " << execfilePriority[execfileNum] << "\n";
-    //     }
-    // /* MP3 Implement end */
+        else if(strcmp(argv[i], "-ep") == 0) {                   
+            execfile[++execfileNum] = argv[++i];
+            execfilePriority[execfileNum] = atoi(argv[++i]);   
+            cout << execfile[execfileNum] << " " << execfilePriority[execfileNum] << "\n";
+        }
         else if (strcmp(argv[i], "-ci") == 0)
         {
             ASSERT(i + 1 < argc);
