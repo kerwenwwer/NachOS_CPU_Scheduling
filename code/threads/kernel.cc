@@ -290,15 +290,15 @@ void Kernel::ExecAll()
 {
     for (int i = 1; i <= execfileNum; i++)
     {
-        int a = Exec(execfile[i]);
+        int a = Exec(execfile[i], execfilePriority[i]);
     }
     currentThread->Finish();
     //Kernel::Exec();
 }
 
-int Kernel::Exec(char *name)
+int Kernel::Exec(char *name, int priority)
 {
-    t[threadNum] = new Thread(name, threadNum);
+    t[threadNum] = new Thread(name, threadNum, priority);
     t[threadNum]->space = new AddrSpace();
     t[threadNum]->Fork((VoidFunctionPtr)&ForkExecute, (void *)t[threadNum]);
     threadNum++;
