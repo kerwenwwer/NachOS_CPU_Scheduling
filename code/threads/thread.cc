@@ -25,6 +25,35 @@
 // this is put at the top of the execution stack, for detecting stack overflows
 const int STACK_FENCEPOST = 0xdedbeef;
 
+
+//----------------------------------------------------------------------
+//  Thread::updateBrust(bool Yield)
+//    Accumlate (tick - startTIme) into burstTime.
+//----------------------------------------------------------------------
+void Thread::updateBrust(bool Yield){
+    burstTime += (kernel->stats->totalTicks - startTime);
+}
+
+//----------------------------------------------------------------------
+//  Thread::setStartTime()
+//    Set the startTime to the tick of current thread.
+//----------------------------------------------------------------------
+
+void Thread::setStartTime(){
+    startTime = kernel->stats->totalTicks;
+}
+
+
+//----------------------------------------------------------------------
+//  Thread::guessNextBrust()
+//    To guess the next brust time we can approximated using the equation:
+//    t​ = 0.5 * T + 0.5 * t​ i​ i-1 ​ ​(type double)​ , i > 0 , t​ = 0 0 ​
+//----------------------------------------------------------------------
+void Thread::guessNextBrust(){
+    int oldApproxBrust = approxBurstTime;
+    approxBurstTime = 0.5 * burstTime + 0.5 * approxBurstTime;
+}
+
 //----------------------------------------------------------------------
 // Thread::Thread
 // 	Initialize a thread control block, so that we can then call
@@ -203,7 +232,9 @@ void Thread::Yield()
 
     DEBUG(dbgThread, "Yielding thread: " << name);
 
+    this->updateBrust(true);            // update brust time when yeild.
     nextThread = kernel->scheduler->FindNextToRun();
+
     if (nextThread != NULL)
     {
         kernel->scheduler->ReadyToRun(this);
@@ -241,6 +272,12 @@ void Thread::Sleep(bool finishing)
 
     DEBUG(dbgThread, "Sleeping thread: " << name);
     DEBUG(dbgTraCode, "In Thread::Sleep, Sleeping thread: " << name << ", " << kernel->stats->totalTicks);
+
+    // Before we sleep we need to update brust time 
+    // and guessNextBrust then, reset the brust time to the next thread.
+    this->updateBrust(true);
+    this->guessNextBrust();
+    this->resetBrustTime();
 
     status = BLOCKED;
     //cout << "debug Thread::Sleep " << name << "wait for Idle\n";

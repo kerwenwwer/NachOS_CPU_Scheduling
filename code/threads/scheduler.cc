@@ -23,6 +23,29 @@
 #include "scheduler.h"
 #include "main.h"
 
+
+
+// ---------------------------------------------------------------------
+//  Scheduling algorithm
+//  Three algroithm SJF, Priority and FIFO
+//
+// ---------------------------------------------------------------------
+int SJFCompare(Thread *a, Thread *b) {
+    if((a->getApproxBurstTime() - a->getBurstTime()) == (b->getApproxBurstTime() - b->getBurstTime()))
+        return 0;
+    return (a->getApproxBurstTime() - a->getBurstTime()) > (b->getApproxBurstTime() - b->getBurstTime()) ? 1 : -1;
+}
+
+int PriorityCompare(Thread *a, Thread *b) {
+    if(a->getPriority() == b->getPriority())
+        return 0;
+    return a->getPriority() > b->getPriority() ? 1 : -1;
+}
+
+int FIFOCompare(Thread *a, Thread *b) {
+    return 1;
+}
+
 //----------------------------------------------------------------------
 // Scheduler::Scheduler
 // 	Initialize the list of ready but not running threads.
@@ -31,7 +54,9 @@
 
 Scheduler::Scheduler()
 {
-    readyList = new List<Thread *>;
+    L1 = new SortedList<Thread *> (SJFCompare);
+    L2 = new SortedList<Thread *> (Priority);
+    L2 = new List<Thread *>;
     toBeDestroyed = NULL;
 }
 
@@ -42,7 +67,9 @@ Scheduler::Scheduler()
 
 Scheduler::~Scheduler()
 {
-    delete readyList;
+    delete L1;
+    delete L2;
+    delete L3;
 }
 
 //----------------------------------------------------------------------
@@ -59,7 +86,21 @@ void Scheduler::ReadyToRun(Thread *thread)
     DEBUG(dbgThread, "Putting thread on ready list: " << thread->getName());
     //cout << "Putting thread on ready list: " << thread->getName() << endl ;
     thread->setStatus(READY);
-    readyList->Append(thread);
+    
+    int priority = thread->getPriority();
+
+    if(priority >= 100 && priority <= 149) {
+        L1->Insert(thread);
+        //DEBUG(demo, "[A] Tick " << kernel->stats->totalTicks << "]: Thread [" << thread->getName());
+    } else if (priority >= 50 && priority <= 99) {
+        L2->Insert(thread);
+    } else if (priority >= 0 && priority <= 49) {
+        L3->Inser(thread);
+    } else {
+        cout << "Pritory is not in any ranges. ERROR!!!\n";
+        ASSERTNOTREACHED();
+    }
+
 }
 
 //----------------------------------------------------------------------
@@ -75,14 +116,17 @@ Scheduler::FindNextToRun()
 {
     ASSERT(kernel->interrupt->getLevel() == IntOff);
 
-    if (readyList->IsEmpty())
-    {
-        return NULL;
+    Thread *thread = NULL;
+
+    if(!L1->IsEmpty()){
+        thread = L1->RemoveFront();
+    }else if (!L2->IsEmpty()){
+        thread = L2->RemoveFront();
+    }else if (!L3->IsEmpty()){
+        thread = L3->RemoveFront();
     }
-    else
-    {
-        return readyList->RemoveFront();
-    }
+
+    return thread;
 }
 
 //----------------------------------------------------------------------
@@ -127,6 +171,9 @@ void Scheduler::Run(Thread *nextThread, bool finishing)
     nextThread->setStatus(RUNNING);     // nextThread is now running
 
     DEBUG(dbgThread, "Switching from: " << oldThread->getName() << " to: " << nextThread->getName());
+
+    // setStartTime to the next thread before context switch
+    nextThread->setStartTime();
 
     // This is a machine-dependent assembly language routine defined
     // in switch.s.  You may have to think
@@ -178,5 +225,8 @@ void Scheduler::CheckToBeDestroyed()
 void Scheduler::Print()
 {
     cout << "Ready list contents:\n";
-    readyList->Apply(ThreadPrint);
+
+   L1->Apply(ThreadPrint);
+   L2->Apply(ThreadPrint);
+   L3->Apply(ThreadPrint);
 }

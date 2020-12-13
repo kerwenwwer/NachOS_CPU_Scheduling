@@ -16,10 +16,17 @@
 // The following class defines the scheduler/dispatcher abstraction -- 
 // the data structures and operations needed to keep track of which 
 // thread is running, and which threads are ready but not running.
+enum SchedulerType {
+        RR,     // Round Robin
+        SJF,
+        Priority,
+        FIFO
+};
 
 class Scheduler {
   public:
     Scheduler();		// Initialize list of ready threads 
+    Scheduler(SchedulerType type);
     ~Scheduler();		// De-allocate ready list
 
     void ReadyToRun(Thread* thread);	
@@ -31,12 +38,15 @@ class Scheduler {
     void CheckToBeDestroyed();// Check if thread that had been
     				// running needs to be deleted
     void Print();		// Print contents of ready list
-    
     // SelfTest for scheduler is implemented in class Thread
-    
+
   private:
-    List<Thread *> *readyList;  // queue of threads that are ready to run,
+    //List <Thread *> *readyList;  // queue of threads that are ready to run,
 				// but not running
+    List<Thread *> *L1;     // L1 queue 
+    List<Thread *> *L2;     // L2 queue
+    List<Thread *> *L3;
+
     Thread *toBeDestroyed;	// finishing thread to be destroyed
     				// by the next thread that runs
 };

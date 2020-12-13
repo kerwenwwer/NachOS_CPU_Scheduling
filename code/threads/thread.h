@@ -106,7 +106,20 @@ class Thread {
 	  int getID() { return (ID); }
     void Print() { cout << name; }
     void SelfTest();		// test whether thread impl is working
+
+    void setPriority(int t)	{execPriority = t;}
     int getPriority() { return priority; }      // return priority
+
+    void setBurstTime(int t)	{burstTime = t;}
+    int getBurstTime()		{return burstTime;}
+    void updateBrust(boo Yield);
+    int getApproxBurstTime() {return approxBurstTime; }
+    void resetBrustTime() {burstTime = 0;}
+
+    int getStartTime()		{return startTime;}
+
+    void guessNextBrust();
+    void setStartTime();
 
   private:
     // some of the private data for this class is listed above
@@ -118,6 +131,10 @@ class Thread {
     char* name;
 	  int   ID;
     int   priority;
+    int   burstTime;	// predicted burst time
+    int   approxBurstTime;
+    int   startTime;	// the start time of the thread
+    int   execPriority;	// the execute priority of the thread
     void StackAllocate(VoidFunctionPtr func, void *arg);
     				// Allocate a stack for thread.
 				// Used internally by Fork()
