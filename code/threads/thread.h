@@ -108,7 +108,7 @@ class Thread {
     void SelfTest();		// test whether thread impl is working
 
     void setPriority(int t)	{execPriority = t;}
-    int getPriority() { return priority; }      // return priority
+    int getPriority() { return execPriority; }      // return priority
 
     void setBurstTime(int t)	{burstTime = t;}
     int getBurstTime()		{return burstTime;}
@@ -130,7 +130,6 @@ class Thread {
     ThreadStatus status;	// ready, running or blocked
     char* name;
 	  int   ID;
-    int   priority;
     int   burstTime;	// predicted burst time
     int   approxBurstTime;
     int   startTime;	// the start time of the thread
