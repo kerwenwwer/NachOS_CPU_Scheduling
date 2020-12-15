@@ -62,8 +62,7 @@ void Thread::guessNextBrust(){
 //	"threadName" is an arbitrary string, useful for debugging.
 //----------------------------------------------------------------------
 
-Thread::Thread(char *threadName, int threadID, int priority = 0)
-{
+Thread::Thread(char* threadName, int threadID, int priority) {
     ID = threadID;
     name = threadName;
     stackTop = NULL;
