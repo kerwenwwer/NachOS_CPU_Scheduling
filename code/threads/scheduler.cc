@@ -55,8 +55,8 @@ int FIFOCompare(Thread *a, Thread *b) {
 Scheduler::Scheduler()
 {
     L1 = new SortedList<Thread *> (SJFCompare);
-    L2 = new SortedList<Thread *> (Priority);
-    L2 = new List<Thread *>;
+    L2 = new SortedList<Thread *> (PriorityCompare);
+    L3 = new List<Thread *>;
     toBeDestroyed = NULL;
 }
 
@@ -95,7 +95,7 @@ void Scheduler::ReadyToRun(Thread *thread)
     } else if (priority >= 50 && priority <= 99) {
         L2->Insert(thread);
     } else if (priority >= 0 && priority <= 49) {
-        L3->Inser(thread);
+        L3->Append(thread);
     } else {
         cout << "Pritory is not in any ranges. ERROR!!!\n";
         ASSERTNOTREACHED();
