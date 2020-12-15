@@ -81,7 +81,7 @@ class Thread {
     void *machineState[MachineStateSize];  // all registers except for stackTop
 
   public:
-    Thread(char* threadName, int threadID, int priority = 0);		// initialize a Thread 
+    Thread(char* debugName, int threadID, int priority);		// initialize a Thread 
     ~Thread(); 				// deallocate a Thread
 					// NOTE -- thread being deleted
 					// must not be running when delete 
@@ -108,7 +108,7 @@ class Thread {
     void SelfTest();		// test whether thread impl is working
 
     void setPriority(int t)	{execPriority = t;}
-    int getPriority() { return execPriority; }      // return priority
+    int getPriority() { return priority; }      // return priority
 
     void setBurstTime(int t)	{burstTime = t;}
     int getBurstTime()		{return burstTime;}
@@ -130,6 +130,8 @@ class Thread {
     ThreadStatus status;	// ready, running or blocked
     char* name;
 	  int   ID;
+    int   priority;
+    int   queueTime;
     int   burstTime;	// predicted burst time
     int   approxBurstTime;
     int   startTime;	// the start time of the thread
@@ -147,7 +149,7 @@ class Thread {
   public:
     void SaveUserState();		// save user-level register state
     void RestoreUserState();		// restore user-level register state
-
+    void aging();
     AddrSpace *space;			// User code this thread is running.
 };
 

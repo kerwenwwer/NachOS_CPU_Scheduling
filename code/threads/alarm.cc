@@ -50,6 +50,20 @@ Alarm::CallBack()
     MachineStatus status = interrupt->getStatus();
     
     if (status != IdleMode) {
-	interrupt->YieldOnReturn();
+        Thread *now = kernel->currentThread;
+        if(now->getPriority() >= 100 && now->getPriority() <= 149){
+            if(kernel->scheduler->checkPreemptive()){
+                interrupt->YieldOnReturn();
+            }
+        } else {
+            if(!kernel->scheduler->L1_IsEmpty()){
+                interrupt->YieldOnReturn();
+            } else {
+                if(now->getPriority() >= 0 && now->getPriority() <= 50){
+                    interrupt->YieldOnReturn();
+                }
+            }
+        }
     }
+    kernel->scheduler->aging();
 }

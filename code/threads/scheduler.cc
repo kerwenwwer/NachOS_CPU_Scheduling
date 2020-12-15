@@ -230,3 +230,67 @@ void Scheduler::Print()
    L2->Apply(ThreadPrint);
    L3->Apply(ThreadPrint);
 }
+
+
+//----------------------------------------------------------------------
+// Scheduler::checkPreemptive()
+//----------------------------------------------------------------------
+
+bool Scheduler::checkPreemptive(){
+    if(!L1->IsEmpty()){
+        Thread *first = L1->RemoveFront();
+        L1->Insert(first);
+
+        Thread *now = kernel->currentThread;
+        if (first->getApproxBurstTime() < now->getApproxBurstTime()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+//----------------------------------------------------------------------
+// Scheduler::aging
+// Handling when aging happened, we need to relocate thread position 
+// in queues.
+//----------------------------------------------------------------------
+
+void Scheduler::aging() {
+    SortedList<Thread *> *newL1 = new SortedList<Thread *> (SJFCompare);
+    SortedList<Thread *> *newL2 = new SortedList<Thread *> (Priority);
+    List<Thread *> *newL3 = new List<Thread *>;
+
+    while (!L1->IsEmpty()){
+        Thread *t  = L1->RemoveFront();
+        t->aging();
+        newL1->Insert(t);
+    }
+
+    while (!L2->IsEmpty()){
+        Thread *t  = L2->RemoveFront();
+        t->aging();
+        if( t->getPriority() >= 100) {
+            newL1->Insert(t);
+        } else {
+            newL2->Insert(t);
+        }
+    }
+
+    while (!L3->IsEmpty()){
+        Thread *t  = L3->RemoveFront();
+        t->aging();
+        if( t->getPriority() >= 50) {
+            newL2->Insert(t);
+        } else {
+            newL3->Insert(t);
+        }
+    }
+
+    delete L1;
+    delete L2;
+    delete L3;
+    L1 = newL1;
+    L2 = newL2;
+    L3 = newL3;
+}

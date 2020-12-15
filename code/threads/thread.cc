@@ -465,3 +465,22 @@ void Thread::SelfTest()
     kernel->currentThread->Yield();
     SimpleThread(0);
 }
+
+//----------------------------------------------------------------------
+// Thread::aging
+//  For those threads that have been in the ready queue for 15 aging  
+//  that is ,after, 1500 ticks no queueing time , so we increase it's 
+//  priority.
+//----------------------------------------------------------------------
+
+void Thread::aging(){
+    queueTime++;
+    if(queueTime >= 15) {
+        queueTime = 0;
+        int oldPriority = priority;
+        priority += 10;
+        if(priority >= 149){
+            priority = 149;
+        }
+    }
+}

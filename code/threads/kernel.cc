@@ -122,7 +122,7 @@ void Kernel::Initialize()
     // But if it ever tries to give up the CPU, we better have a Thread
     // object to save its state.
 
-    currentThread = new Thread("main", threadNum++);
+    currentThread = new Thread("main", threadNum++, 149);
     currentThread->setStatus(RUNNING);
 
     stats = new Statistics();       // collect statistics

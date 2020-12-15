@@ -39,7 +39,9 @@ class Scheduler {
     				// running needs to be deleted
     void Print();		// Print contents of ready list
     // SelfTest for scheduler is implemented in class Thread
-
+    bool checkPreemptive();
+    bool L1_IsEmpty() { return L1->IsEmpty(); }
+    void aging();
   private:
     //List <Thread *> *readyList;  // queue of threads that are ready to run,
 				// but not running
