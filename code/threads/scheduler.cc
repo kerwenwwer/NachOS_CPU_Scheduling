@@ -258,7 +258,7 @@ bool Scheduler::checkPreemptive(){
 
 void Scheduler::aging() {
     SortedList<Thread *> *newL1 = new SortedList<Thread *> (SJFCompare);
-    SortedList<Thread *> *newL2 = new SortedList<Thread *> (Priority);
+    SortedList<Thread *> *newL2 = new SortedList<Thread *> (PriorityCompare);
     List<Thread *> *newL3 = new List<Thread *>;
 
     while (!L1->IsEmpty()){
@@ -283,7 +283,7 @@ void Scheduler::aging() {
         if( t->getPriority() >= 50) {
             newL2->Insert(t);
         } else {
-            newL3->Insert(t);
+            newL3->Append(t);
         }
     }
 

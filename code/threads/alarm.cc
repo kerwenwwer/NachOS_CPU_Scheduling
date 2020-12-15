@@ -48,6 +48,8 @@ Alarm::CallBack()
 {
     Interrupt *interrupt = kernel->interrupt;
     MachineStatus status = interrupt->getStatus();
+
+    kernel->scheduler->aging();
     
     if (status != IdleMode) {
         Thread *now = kernel->currentThread;
@@ -65,5 +67,4 @@ Alarm::CallBack()
             }
         }
     }
-    kernel->scheduler->aging();
 }
