@@ -232,7 +232,6 @@ void Thread::Yield()
 
     DEBUG(dbgThread, "Yielding thread: " << name);
 
-    this->updateBrust(true);            // update brust time when yeild.
     nextThread = kernel->scheduler->FindNextToRun();
 
     if (nextThread != NULL)
