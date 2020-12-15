@@ -112,7 +112,7 @@ class Thread {
 
     void setBurstTime(int t)	{burstTime = t;}
     int getBurstTime()		{return burstTime;}
-    void updateBrust(boo Yield);
+    void updateBrust(bool Yield);
     int getApproxBurstTime() {return approxBurstTime; }
     void resetBrustTime() {burstTime = 0;}
 
