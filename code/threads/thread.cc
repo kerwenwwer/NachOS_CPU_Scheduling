@@ -31,7 +31,11 @@ const int STACK_FENCEPOST = 0xdedbeef;
 //    Accumlate (tick - startTIme) into burstTime.
 //----------------------------------------------------------------------
 void Thread::updateBrust(bool Yield){
+    int oldburstTime = burstTime;
     burstTime += (kernel->stats->totalTicks - startTime);
+    DEBUG(dbgSchedule, "[D] Tick [" << kernel->stats->totalTicks << "]: Thread [" << this->getID() 
+                    << "] update approximate bursttime,from:[" << oldburstTime <<"],add [" << kernel->stats->totalTicks - startTime << "]"
+                    << ", to [" << burstTime << "]");
 }
 
 //----------------------------------------------------------------------
@@ -482,5 +486,6 @@ void Thread::aging(){
         if(priority >= 149){
             priority = 149;
         }
+        DEBUG(dbgSchedule, "[C] Tick [" << kernel->stats->totalTicks << "]: Thread [" << this->getID() << "] changes its priority from [​" << oldPriority <<"] to [" << priority << "]");
     }
 }

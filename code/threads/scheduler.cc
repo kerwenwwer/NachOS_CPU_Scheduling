@@ -91,11 +91,13 @@ void Scheduler::ReadyToRun(Thread *thread)
 
     if(priority >= 100 && priority <= 149) {
         L1->Insert(thread);
-        //DEBUG(demo, "[A] Tick " << kernel->stats->totalTicks << "]: Thread [" << thread->getName());
+        DEBUG(dbgSchedule, "[A] Tick [" << kernel->stats->totalTicks << "]: Thread [" << thread->getID() << "] is inserted into queue L[1]");
     } else if (priority >= 50 && priority <= 99) {
         L2->Insert(thread);
+        DEBUG(dbgSchedule, "[A] Tick [" << kernel->stats->totalTicks << "]: Thread [" << thread->getID() << "] is inserted into queue L[2]");
     } else if (priority >= 0 && priority <= 49) {
         L3->Append(thread);
+        DEBUG(dbgSchedule, "[A] Tick [" << kernel->stats->totalTicks << "]: Thread [" << thread->getID() << "] is inserted into queue L[3]");
     } else {
         cout << "Pritory is not in any ranges. ERROR!!!\n";
         ASSERTNOTREACHED();
@@ -120,10 +122,13 @@ Scheduler::FindNextToRun()
 
     if(!L1->IsEmpty()){
         thread = L1->RemoveFront();
+        DEBUG(dbgSchedule, "[B] Tick [" << kernel->stats->totalTicks << "]: Thread [" << thread->getID() << "] is removed from queue L[1]");
     }else if (!L2->IsEmpty()){
         thread = L2->RemoveFront();
+        DEBUG(dbgSchedule, "[B] Tick [" << kernel->stats->totalTicks << "]: Thread [" << thread->getID() << "] is removed from queue L[2]");
     }else if (!L3->IsEmpty()){
         thread = L3->RemoveFront();
+        DEBUG(dbgSchedule, "[B] Tick [" << kernel->stats->totalTicks << "]: Thread [" << thread->getID() << "] is removed from queue L[3]");
     }
 
     return thread;
@@ -180,6 +185,9 @@ void Scheduler::Run(Thread *nextThread, bool finishing)
     // a bit to figure out what happens after this, both from the point
     // of view of the thread and from the perspective of the "outside world".
 
+    DEBUG(dbgSchedule, "[E] Tick [" << kernel->stats->totalTicks << "]: Thread [" << nextThread->getID() 
+                        << "] is now selected for execution, thread [" << oldThread->getID() 
+                        << "] is replaced, and it has executed [" << oldThread->getBurstTime() << "] ticks");
     SWITCH(oldThread, nextThread);
 
     // we're back, running oldThread
@@ -272,6 +280,7 @@ void Scheduler::aging() {
         t->aging();
         if( t->getPriority() >= 100) {
             newL1->Insert(t);
+            DEBUG(dbgSchedule, "[B] Tick [" << kernel->stats->totalTicks << "]: Thread [" << t->getID() << "] is removed from queue L[2]");
         } else {
             newL2->Insert(t);
         }
@@ -282,6 +291,7 @@ void Scheduler::aging() {
         t->aging();
         if( t->getPriority() >= 50) {
             newL2->Insert(t);
+            DEBUG(dbgSchedule, "[B] Tick [" << kernel->stats->totalTicks << "]: Thread [" << t->getID() << "] is removed from queue L[3]");
         } else {
             newL3->Append(t);
         }
